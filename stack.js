@@ -3,70 +3,134 @@ class Stack {
     constructor() {
         this.items = []
         this.count = 0
-         
     }
 
     // Add element to top of stack
     push(element) {
         this.items[this.count] = element
-        let push_res=`${element}`; //console.log(`added to ${this.count}`);
-        this.count += 1;
-        let count=this.count -1;
-        //return [push_res,count];
-        return [push_res, count];
+        this.count += 1
+        return element
     }
 
-    // Return and remove top element in stack
-    // Return undefined if stack is empty
+    // Remove top element
     pop() {
-        if(this.count == 0) return undefined
+        if (this.count == 0) return undefined
+
         let deleteItem = this.items[this.count - 1]
         this.count -= 1
-        console.log(`${deleteItem} removed`)
+
         return deleteItem
     }
 
-    // Check top element in stack
+    // Check top element
     peek() {
-        console.log(`Top element is ${this.items[this.count - 1]}`)
+        if (this.count == 0) return undefined
+
         return this.items[this.count - 1]
     }
 
     // Check if stack is empty
     isEmpty() {
-        console.log(this.count == 0 ? 'Stack is empty' : 'Stack is NOT empty')
         return this.count == 0
     }
 
-    // Check size of stack
+    // Check stack size
     size() {
-        console.log(`${this.count} elements in stack`)
         return this.count
-    }
-
-    // Print elements in stack
-    print() {
-        let str = ''
-        for(let i = 0; i < this.count; i++) {
-            str += this.items[i] + ' '
-        }
-        return str
     }
 
     // Clear stack
     clear() {
         this.items = []
         this.count = 0
-        console.log('Stack cleared..')
-        return this.items
     }
 }
 
 const stack = new Stack()
 
-$(document).ready(function(){
-    $("#stack").prepend(`<div class="row bg-primary push">${stack.push(100)[0]}</div>`);
-    $("#stack").prepend(`<div class="row bg-success push">${stack.push(200)[0]}</div>`);
-    $("#stack").prepend(`<div class="row bg-primary push">${stack.push(300)[0]}</div>`);
-    $("#stack").prepend(`<div class="row bg-success push">${stack.push(400)[0]}</div>`);
-});
+// Display stack values
+function displayStack() {
+    $("#stack").empty()
+
+    for (let i = stack.count - 1; i >= 0; i--) {
+        let block = $("<div>")
+        block.addClass("row bg-primary push mb-1")
+        block.text(stack.items[i])
+
+        $("#stack").append(block)
+    }
+}
+
+$(document).ready(function() {
+
+    // Initial sample values
+    stack.push(100)
+    stack.push(200)
+    stack.push(300)
+    stack.push(400)
+
+    displayStack()
+
+    // Push button
+    $("#pushBtn").click(function() {
+        let value = $("#stackInput").val().trim()
+
+        if (value == "") {
+            $("#message").text("Please enter a value.")
+            return
+        }
+
+        stack.push(value)
+
+        $("#stackInput").val("")
+        $("#message").text(value + " added to stack.")
+
+        displayStack()
+    })
+
+    // Pop button
+    $("#popBtn").click(function() {
+        let deleted = stack.pop()
+
+        if (deleted == undefined) {
+            $("#message").text("Stack is empty.")
+            return
+        }
+
+        $("#deleted").empty()
+        $("#deleted").append(
+            $("<div>").addClass("row pop text-bg-danger border border-light").text(deleted)
+        )
+
+        $("#message").text(deleted + " removed from stack.")
+
+        displayStack()
+    })
+
+    // Peek button
+    $("#peekBtn").click(function() {
+        let top = stack.peek()
+
+        if (top == undefined) {
+            $("#message").text("Stack is empty.")
+            return
+        }
+
+        displayStack()
+
+        $("#stack .push").first().addClass("border border-warning border-3")
+
+        $("#message").text("Top element is " + top)
+    })
+
+    // Clear button
+    $("#clearBtn").click(function() {
+        stack.clear()
+
+        $("#deleted").empty()
+        $("#message").text("Stack cleared.")
+
+        displayStack()
+    })
+
+})
